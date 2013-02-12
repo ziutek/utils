@@ -37,9 +37,13 @@ func (m MAC) String() string {
 	)
 }
 
-func (m MAC) ColonStr() string {
+func (m MAC) ColonString() string {
 	return fmt.Sprintf(
 		"%02x:%02x:%02x:%02x:%02x:%02x",
 		byte(m>>40), byte(m>>32), byte(m>>24), byte(m>>16), byte(m>>8), byte(m),
 	)
+}
+
+func (m MAC) PlainString() string {
+	return fmt.Sprintf("%012x", uint64(m))
 }
