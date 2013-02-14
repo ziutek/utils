@@ -30,6 +30,8 @@ func ParseMAC(s string) MAC {
 	return MAC(m)
 }
 
+// String return string representation of m in form hh-hh-hh-hh-hh-hh, where h
+// is hexadecimal digit: 0-9,a-f
 func (m MAC) String() string {
 	return fmt.Sprintf(
 		"%02x-%02x-%02x-%02x-%02x-%02x",
@@ -37,6 +39,8 @@ func (m MAC) String() string {
 	)
 }
 
+// ColonString return string representation of m in form hh:hh:hh:hh:hh:hh,
+// where h is hexadecimal digit: 0-9,a-f
 func (m MAC) ColonString() string {
 	return fmt.Sprintf(
 		"%02x:%02x:%02x:%02x:%02x:%02x",
@@ -44,6 +48,8 @@ func (m MAC) ColonString() string {
 	)
 }
 
+// PlainString return string representation of m in form hhhhhhhhhhhh, where h
+// is hexadecimal digit: 0-9,a-f
 func (m MAC) PlainString() string {
 	return fmt.Sprintf("%012x", uint64(m))
 }
