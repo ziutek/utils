@@ -14,6 +14,7 @@ func isZeros(p net.IP) bool {
 	return true
 }
 
+// IsIPv4 returns true if ip is IPv4 address.
 func IsIPv4(ip net.IP) bool {
 	return len(ip) == net.IPv4len ||
 		isZeros(ip[0:10]) && ip[10] == 0xff && ip[11] == 0xff
@@ -45,6 +46,7 @@ func u64ToIP(ip net.IP, a uint64) {
 	ip[7] = byte(a)
 }
 
+// IPAdd adds offset to ip
 func IPAdd(ip net.IP, offset int) net.IP {
 	if IsIPv4(ip) {
 		a := int(ipToI32(ip[len(ip)-4:]))
@@ -64,4 +66,15 @@ func IPAdd(ip net.IP, offset int) net.IP {
 	u64ToIP(ip[:net.IPv6len/2], a)
 	u64ToIP(ip[net.IPv6len/2:], b)
 	return ip
+}
+
+// IPMod calculates ip % d
+func IPMod(ip net.IP, d uint) uint {
+	if IsIPv4(ip) {
+		return uint(ipToI32(ip[len(ip)-4:])) % d
+	}
+	b := uint64(d)
+	hi := ipToU64(ip[:net.IPv6len/2])
+	lo := ipToU64(ip[net.IPv6len/2:])
+	return uint(((hi%b)*((0-b)%b) + lo%b) % b)
 }

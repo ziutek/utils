@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-type example struct {
+type exampleIPAdd struct {
 	ip     string
 	offset int
 	exp    string
@@ -13,7 +13,7 @@ type example struct {
 
 const ipv6max = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
 
-var test = []example{
+var testIPAdd = []exampleIPAdd{
 	{"0.0.0.0", 1, "0.0.0.1"},
 	{"0.0.0.0", -1, "255.255.255.255"},
 	{"255.255.255.255", 1, "0.0.0.0"},
@@ -32,11 +32,40 @@ var test = []example{
 }
 
 func TestIPAdd(t *testing.T) {
-	for _, e := range test {
+	for _, e := range testIPAdd {
 		a := net.ParseIP(e.ip)
 		b := IPAdd(a, e.offset)
 		if !b.Equal(net.ParseIP(e.exp)) {
 			t.Errorf("IPAdd(%s, %d)=%s != %s", e.ip, e.offset, b, e.exp)
+		}
+	}
+}
+
+type exampleIPMod struct {
+	ip  string
+	d   uint
+	exp uint
+}
+
+var testIPMod = []exampleIPMod{
+	{"192.168.1.246", 100, 22},
+	{"192.168.200.1", 10000, 6721},
+
+	{"1234::1222:aaaa", 12652, 4262},
+	{"1234::1222:aaaa", 1e4, 9162},
+	{"1234::1222:aaaa", 1e5, 9162},
+	{"1234::1222:aaaa", 1e6, 909162},
+	{"1234:1111:1::1222:aaaa", 123456789, 12319868},
+	{"1234:1111:1::1222:aaaa", 1e7, 3633322},
+	{"1234:1111:1::1222:aaaa", 1e8, 63633322},
+}
+
+func TestIPMod(t *testing.T) {
+	for _, e := range testIPMod {
+		a := net.ParseIP(e.ip)
+		b := IPMod(a, e.d)
+		if b != e.exp {
+			t.Errorf("IPMod(%s, %d)=%d != %d", e.ip, e.d, b, e.exp)
 		}
 	}
 }
