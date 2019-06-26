@@ -69,3 +69,33 @@ func TestIPMod(t *testing.T) {
 		}
 	}
 }
+
+type exampleIPSub struct {
+	a  string
+	b  string
+	d  int
+	ok bool
+}
+
+var testIPSub = []exampleIPSub{
+	{"1.2.3.4", "1.2.3.4", 0, true},
+	{"1.1.1.1", "1.1.1.9", -8, true},
+	{"128.0.0.0", "0.0.0.0", 0, false},
+	{"128.0.0.0", "0.0.0.1", 2147483647, true},
+	{"0.0.0.1", "128.0.0.0", -2147483647, true},
+	{"0.0.0.0", "128.0.0.0", -2147483648, true},
+	{"0.0.0.0", "128.0.0.1", 0, false},
+	{"1234::1222:aaaa", "1234::1222:0000", 0xAAAA, true},
+	{"1234::1222:0000", "1234::1222:aaaa", -0xAAAA, true},
+}
+
+func TestIPSub(t *testing.T) {
+	for _, e := range testIPSub {
+		a := net.ParseIP(e.a)
+		b := net.ParseIP(e.b)
+		d, ok := IPSub(a, b)
+		if d != e.d || ok != e.ok {
+			t.Errorf("IPSub(%s, %s)=%d,%t != %d,%t", e.a, e.b, d, ok, e.d, e.ok)
+		}
+	}
+}
